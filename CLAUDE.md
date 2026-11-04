@@ -4,26 +4,27 @@ Video portfolio for NUU Studios (Malvin's creative studio, North Carolina). Mode
 
 ## Files
 
-- `index.html`: the whole site in one file (HTML, CSS and JS inline). No build step.
+- `index.html`: the page (HTML, CSS and JS inline). No build step.
+- `videos.json`: the site details and video list the page loads.
+- `images/`: tile images, `<video id>-sm.jpg` (640px, for the cloud and folders) and `<video id>-md.jpg` (1400px, for the grid and lightbox).
+- `_headers`: Cloudflare Pages caching rules.
+- `_blob/` (git-ignored): raw assets downloaded from the claude.ai artifact.
 
-## Where it lives right now
+## Where it lives
 
-Published as a Claude artifact (private until shared): https://claude.ai/artifact/E6EwzXFtnC1HAWhV6ysHKy
-
-The live page saves itself: the "+ add video" form uploads files to the artifact's asset store and republishes the page with the new video list. That only works on claude.ai. Opening `index.html` locally shows the design, but the upload form and uploaded images won't work there.
-
-The live page is the source of truth for the video list. Before republishing to the artifact, read the live version first and keep its `<script id="data">` contents, or videos added from the page will be lost.
-
-Plan: move to self-hosting (Netlify, own domain such as nuustudios.com), with full videos on YouTube/Vimeo embedded in the page, YouTube thumbnails as tile images, and the video list in a plain data file or a published Google Sheet instead of the upload form.
+- Public site: Cloudflare Pages, deployed from the GitHub repo `malvinvu/NUU-Studios-Portfolio` on every push to `main`, on Malvin's domain (already on Cloudflare).
+- Editing copy: the claude.ai artifact https://claude.ai/artifact/E6EwzXFtnC1HAWhV6ysHKy still has the "+ add video" form, which uploads to the artifact's asset store and saves the page. That form only works on claude.ai; on the public site it stays hidden.
+- To bring work added on claude.ai to the public site: read the artifact's `<script id="data">`, download each new video's `sm`/`md` assets, save them as `images/<id>-sm.jpg` / `-md.jpg`, add the entry to `videos.json` with those paths (and `cover` set to the `md` path), then commit and push.
+- The artifact still runs the older single-file setup (inline data, `/_blob/` ids). Don't publish this `index.html` to it as-is: it loads `videos.json`, which the artifact doesn't serve.
 
 ## How the page is built
 
-- Data: `<script id="data" type="application/json">` holds `{name, handle, tagline, videos:[...]}`.
-  Each video: `id, title, who, cat (lowercase category), year, kind ("file" | "link")`, plus
-  `asset` (uploaded clip id), `poster` (auto frame grab id), `full` (link to the full video, for uploaded previews),
-  `link` and `cover` (for link entries), `w`/`h` (aspect).
+- Data: `videos.json` holds `{name, handle, tagline, email, videos:[...]}`.
+  Each video: `id, title, who, cat (lowercase category), year, kind ("file" | "link"), desc`, plus
+  `sm`/`md` (image paths), `cover` (same as `md` for link entries), `link`, `w`/`h` (aspect).
+  Categories are fixed in `CATS` in `index.html`.
 - Hero: `initThree()` draws the tile cloud on a 2D canvas (no libraries). Tiles drift gently, the cloud "breathes", tiles part slightly around the cursor, and hovering a tile lifts it with a white glow. Tiles show still images only, each with its own random crop for a collage look.
-- Categories: buttons in the top bar (`#topcats`) and above the grid (`#chips`). Picking one pops that category's tiles forward and dims the rest, and filters the grid.
+- Categories: buttons in the top bar (`#topcats`) and macOS-style folders above the grid (`#folders`). Picking one pops that category's tiles forward and dims the rest, and filters the grid.
 - Lightbox: tapping a tile opens the video (uploaded clip plays; links open YouTube/Vimeo/Instagram in a new tab).
 
 ## Design

@@ -1,0 +1,5 @@
+# Cloudflare Pages response headers. Image names never change once made, so browsers can keep them.
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+/videos.json
+  Cache-Control: no-cache

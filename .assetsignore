@@ -1,0 +1,9 @@
+# Files in the repo that shouldn't be served on the website
+.git
+.gitignore
+.assetsignore
+_blob
+CLAUDE.md
+README.md
+wrangler.jsonc
+index-local-backup.html
